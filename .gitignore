@@ -1,0 +1,14 @@
+save
+tools
+
+# Generated state
+*.log
+UE4SS_SDK/
+UE4SS_Dumps/
+tools/FModel/Output/
+
+# Local artifacts
+build/
+artifacts/
+.vs/
+*.user
