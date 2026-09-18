@@ -1,10 +1,10 @@
 ; Canonical, source-controlled UE4SS load manifest (top-to-bottom load order).
 ModKit : 1
-Coordinates : 1
-CheckList : 1
-Compass : 1
-TP : 1
-WallHack : 1
-CoordinatesDiagnostics : 0
-CheckListDiagnostics : 0
-WallHackDiagnostics : 0
+POCCoordinates : 1
+POCCheckList : 1
+POCCompass : 1
+POCTP : 1
+POCWallHack : 1
+POCCoordinatesDiagnostics : 0
+POCCheckListDiagnostics : 0
+POCWallHackDiagnostics : 0

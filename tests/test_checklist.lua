@@ -29,8 +29,8 @@ component.EntryPointTagGuest = { TagName = FName("Minigame.RiftX.CoinRush.Entry.
 function component:GetOwner()
     return minigame_owner
 end
-load_mod("CheckList")
-keys.F2()
+load_mod("POCCheckList")
+keys["CTRL+F2"]()
 assert(contains("Narrative.Test.Missing"))
 assert(contains("RiftX.CoinRush"), "Loaded mini-games must remain visible")
 assert(contains("2 loaded"), "Count both collected and missing loaded narrative actors")
@@ -38,7 +38,7 @@ assert(not contains("Narrative.Test.Collected"), "Collected narrative items must
 assert(queries.VehicleSaveGame == nil)
 subsystem.CurrentSaveGame = nil
 logs = {}
-keys.F2()
+keys["CTRL+F2"]()
 assert(contains("Unknown"))
 assert(contains("RiftX.CoinRush"), "Mini-games must remain visible when the save is unavailable")
 assert(not contains("Narrative.Test.Missing"), "Unavailable save must not invent missing items")

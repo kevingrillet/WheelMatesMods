@@ -14,12 +14,12 @@ Record only classes, objects, and paths verified by dumps/logs. Do not write fea
 
 | Steam build | Class / object | Role | Evidence | Notes |
 | --- | --- | --- | --- | --- |
-| `25208735` | `BP_VehiclePlayerController_C` | Local player controller | Coordinates console test, 13:50 | Two separate instances observed in local split-screen |
-| `25208735` | `BP_Traxxas_X_Maxx_C` | Local player Pawn / RC car | Coordinates console test, 13:50 | One Pawn observed per local player |
+| `25208735` | `BP_VehiclePlayerController_C` | Local player controller | POCCoordinates console test, 13:50 | Two separate instances observed in local split-screen |
+| `25208735` | `BP_Traxxas_X_Maxx_C` | Local player Pawn / RC car | POCCoordinates console test, 13:50 | One Pawn observed per local player |
 
 ## September 18 reflection and integration findings
 
-- `VehicleSaveGameSubsystem.CurrentSaveGame`: active save source used by CheckList;
+- `VehicleSaveGameSubsystem.CurrentSaveGame`: active save source used by POCCheckList;
   select the subsystem belonging to the current GameInstance.
 - `VehicleSaveGame.CollectedNarrativeItems`: narrative tag map used to omit collected items.
 - `BP_Collectable_Gear_C` inherits `BP_Collectable_OutlineBubble_C`, which exposes
@@ -29,5 +29,5 @@ Record only classes, objects, and paths verified by dumps/logs. Do not write fea
 - The jmap exports reflected types and class defaults, not live component values.
   Use runtime probes for the actual depth, stencil and material settings.
 - Per-actor world-identity and Gear visibility filters rejected real loaded targets
-  in this game. CheckList/Compass/TP use valid loaded candidates instead. TP still
+  in this game. POCCheckList/POCCompass/POCTP use valid loaded candidates instead. POCTP still
   tracks the session world separately to invalidate return points after travel.

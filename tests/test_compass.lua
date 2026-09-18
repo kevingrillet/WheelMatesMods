@@ -5,8 +5,8 @@ target.bActorIsBeingDestroyed = true
 function target:GetWorld()
     error("Gear world lookup is not part of the loaded-target contract")
 end
-load_mod("Compass")
-keys.F3()
+load_mod("POCCompass")
+keys["CTRL+F3"]()
 assert(layouts[1].OverlayContent.children[1].children[1]:GetText():ToString():find("GEAR  ", 1, true))
 assert(queries.BP_Collectable_Gear_C == 1, "One scan for both players")
 tick(200, 4)

@@ -26,7 +26,7 @@ The following names occur alongside level and narrative data. They must be treat
 
 The historical discovery save had completed results for four mini-games, but that is not an exhaustive catalog. A completed-result entry proves completion only; it does not prove that no other mini-game definition exists.
 
-## Implication for CheckList
+## Implication for POCCheckList
 
 The future complete catalogue should cover these families separately (the current console report covers loaded Gears, missing narrative actors and mini-game entry points):
 

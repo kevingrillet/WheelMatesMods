@@ -145,8 +145,16 @@ Key = setmetatable({}, {
     end,
 })
 ModifierKey = { CONTROL = "CTRL", SHIFT = "SHIFT" }
-function RegisterKeyBind(key, _, callback)
-    keys[key] = callback
+function RegisterKeyBind(key, modifiers, callback)
+    local parts = {}
+    for _, modifier in ipairs(modifiers) do
+        parts[#parts + 1] = modifier
+    end
+    table.sort(parts)
+    parts[#parts + 1] = key
+    local chord = table.concat(parts, "+")
+    assert(keys[chord] == nil, "Duplicate keybind: " .. chord)
+    keys[chord] = callback
 end
 function ExecuteInGameThread(callback)
     callback()
@@ -231,7 +239,15 @@ function load_mod(name)
 end
 function reload()
     keys, loops = {}, {}
-    for _, module in ipairs({ "WMRuntime", "WMOverlay", "WMRenderState" }) do
+    for _, module in ipairs({
+        "WMRuntime",
+        "WMOverlay",
+        "WMRenderState",
+        "WMCollectibles",
+        "WMNavigation",
+        "WMCoordinates",
+        "WMTeleport",
+    }) do
         package.loaded[module] = nil
     end
 end

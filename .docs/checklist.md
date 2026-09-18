@@ -1,4 +1,4 @@
-# CheckList discovery notes
+# POCCheckList discovery notes
 
 ## Current implementation (September 18, 2026)
 
@@ -30,7 +30,7 @@ Candidate categories to validate in the game are Neuro Nodes, Neuro Cores, Neuro
 
 The player snapshot used during discovery is therefore missing three Plates and two Gears. `CollectedItems` is a `TSet` of 1,624 persistent GUIDs and is the authoritative collected-item set.
 
-Gears are known to unlock vehicle-customization options. The Gear correlation probe in CheckListDiagnostics reads `VehicleSaveGame.UnlockedCustomizationOptions` alongside loaded `BP_Collectable_Gear` actors; it remains read-only and is intended to establish the identifier linking a Gear, its persistent GUID, and its unlock.
+Gears are known to unlock vehicle-customization options. The Gear correlation probe in POCCheckListDiagnostics reads `VehicleSaveGame.UnlockedCustomizationOptions` alongside loaded `BP_Collectable_Gear` actors; it remains read-only and is intended to establish the identifier linking a Gear, its persistent GUID, and its unlock.
 
 The discovery snapshot of `PerLevelData` contains the tags `Map.Level.Tutorial`, `Map.Level.Kitchen`, `Map.Level.Backyard`, `Map.Level.Corridor`, `Map.Level.RiftX`, `Map.Level.Garage`, and `Map.Level.Shed`.
 
@@ -42,7 +42,7 @@ In the RiftX-loaded session, the compact runtime probe found 27 narrative items,
 
 ## Required evidence before UI work
 
-The game package contains names such as `Collectable`, `MemoryCard`, and `Antenna`, but asset names alone do not establish how the runtime tracks collection. The read-only discovery probes now live in `CheckListDiagnostics` (`Ctrl+NumPad 1`):
+The game package contains names such as `Collectable`, `MemoryCard`, and `Antenna`, but asset names alone do not establish how the runtime tracks collection. The read-only discovery probes now live in `POCCheckListDiagnostics` (`Ctrl+NumPad 1`):
 
 - candidate actors loaded in the current level, found by a one-off scan of actor class and object names;
 - their concrete runtime class names;
@@ -59,11 +59,11 @@ Use `Ctrl+F2` for the compact player-facing report, and the diagnostic module fo
 
 ## Module split
 
-`CheckList` contains only the player-facing compact checklist on `Ctrl+F2`.
+`POCCheckList` contains only the player-facing compact checklist on `Ctrl+F2`.
 It includes loaded Gears as missing items because collected Gears are removed from the active level.
-Its exploratory runtime probes live in the disabled-by-default `CheckListDiagnostics` module:
+Its exploratory runtime probes live in the disabled-by-default `POCCheckListDiagnostics` module:
 
 - `Ctrl+NumPad 1`: collectible actor and property discovery;
 - `Ctrl+NumPad 2`: Gear locations and customization unlock comparison.
 
-`CoordinatesDiagnostics` shares the same NumPad shortcut family. Enable only one diagnostics module at a time, then reload UE4SS with `Ctrl+R`.
+`POCCoordinatesDiagnostics` shares the same NumPad shortcut family. Enable only one diagnostics module at a time, then reload UE4SS with `Ctrl+R`.

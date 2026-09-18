@@ -30,9 +30,9 @@ The first-install script references the local `g35d1795d` UE4SS bundle under `to
 
 ## Mod loading
 
-`mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; entries require a `Scripts/main.lua`; the current manifest also enables WallHack for WIP testing, which is not a declaration of feature completion. The repository does not use per-module `enabled.txt` files.
+`mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; entries require a `Scripts/main.lua`; the current manifest also enables POCWallHack for WIP testing, which is not a declaration of feature completion. The repository does not use per-module `enabled.txt` files.
 
-Press `Ctrl+R` in the UE4SS console to reload the manifest and scripts. Keep ModKit enabled for cleanup. Coordinates, Compass and WallHack restart off, and TP return points are cleared. Shared libraries live in `mods/shared/`; they are not manifest entries.
+Press `Ctrl+R` in the UE4SS console to reload the manifest and scripts. Keep ModKit enabled for cleanup. POCCoordinates, POCCompass and POCWallHack restart off, and POCTP return points are cleared. Shared libraries live in `mods/shared/`; they are not manifest entries.
 
 ## Safety notes
 
