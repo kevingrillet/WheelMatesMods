@@ -16,6 +16,8 @@ local RenderState = require("WMRenderState")
 ExecuteInGameThread(function()
     Overlay.cleanup("Coordinates")
     Overlay.cleanup("Compass")
+    Overlay.cleanup("TweaksP1")
+    Overlay.cleanup("TweaksP2")
     local pending = RenderState.restore()
     if pending > 0 then
         log("Pending WallHack restorations: " .. pending)

@@ -1,12 +1,14 @@
 ; Canonical, source-controlled UE4SS load manifest (top-to-bottom load order).
+; Tweaks owns runtime cleanup; POCs are kept for independent regression tests.
+Tweaks : 1
 SkipStartup : 1
 AutoDucks : 1
-ModKit : 1
-POCCoordinates : 1
-POCCheckList : 1
-POCCompass : 1
-POCTP : 1
-POCWallHack : 1
+ModKit : 0
+POCCoordinates : 0
+POCCheckList : 0
+POCCompass : 0
+POCTP : 0
+POCWallHack : 0
 POCCoordinatesDiagnostics : 0
 POCCheckListDiagnostics : 0
 POCWallHackDiagnostics : 0

@@ -9,75 +9,89 @@ functional feedback, not an exhaustive validation of every lifecycle edge case.
 The user also confirmed the new POCCompass height indicator working and approved
 committing this first refactor.
 
-## Preparing Tweaks
+## Tweaks
 
-The previous modules and their diagnostics now use the `POC` prefix. Their presentation remains unchanged for validation against the extracted
-[shared libraries](mods/shared/README.md). Restart the game once after the folder
-rename; subsequent shared-code changes require a full UE4SS reload.
+[Tweaks](mods/Tweaks/README.md) is enabled alongside [SkipStartup](mods/SkipStartup/README.md) and
+[AutoDucks](mods/AutoDucks/README.md) in the canonical
+[manifest](mods/mods.txt). It combines compact coordinates, a missing-item table,
+a compass, automatic/manual target selection and teleport/return for each local
+player. WallHack is deferred. The shared-library refactor was confirmed working
+in game by the user. Following the input, travel, stale-HUD and performance fixes,
+the user reports Tweaks looking good and authorizes commits. This covers the tested
+scenarios, not every possible native lifecycle or physics edge case.
 
-[Tweaks](mods/Tweaks/README.md) documents the planned combined module, compact HUD,
-missing-item table, automatic/manual targeting, refresh and TP/return. Its runtime
-is deliberately not implemented until the POCs are verified in game. WallHack is
-reserved for a later Tweaks version. The manifest retains the POC test profile.
-
-## Modules
-
-| Module | Status | Controls |
+| Action | Player 1 | Player 2 |
 | --- | --- | --- |
-| ModKit | Loader diagnostics and reload cleanup | Automatic |
-| POCCoordinates | Functional split-screen overlay; shared container and reload cleanup | `Ctrl+F1` |
-| POCCheckList | Functional loaded-item console report; active-save filtering | `Ctrl+F2` |
-| POCCompass | Functional Gear direction HUD with UP/DOWN/LEVEL height indication | `Ctrl+F3` |
-| POCTP | Functional fixed RiftX route and return for both screens | See below |
-| POCWallHack | **WIP**: reversible Gear Custom Depth; through-wall visual result unvalidated | `Ctrl+F4` |
-| [Tweaks](mods/Tweaks/README.md) | Design and shared foundations prepared; awaiting POC validation | None |
+| Coordinates | `Ctrl+F1` | `Ctrl+Shift+F1` |
+| Missing-item table | `Ctrl+F2` | `Ctrl+Shift+F2` |
+| Compass | `Ctrl+F3` | `Ctrl+Shift+F3` |
+| Toggle type/distance vs distance sort | `Ctrl+F4` | `Ctrl+Shift+F4` |
+| Teleport to selected target | `Ctrl+F5` | `Ctrl+Shift+F5` |
+| Return | `Ctrl+F6` | `Ctrl+Shift+F6` |
+| [AutoDucks](mods/AutoDucks/README.md): gather ducks on the pool map | `Ctrl+F7` | `Ctrl+Shift+F7` |
+| Refresh shared catalogue | `Ctrl+F8` | `Ctrl+Shift+F8` |
+| Next target, manual mode | `Ctrl+F10` | `Ctrl+Shift+F10` |
+| Nearest target, automatic mode | `Ctrl+F12` | `Ctrl+Shift+F12` |
 
-`POCCoordinatesDiagnostics`, `POCCheckListDiagnostics` and `POCWallHackDiagnostics` are
-optional investigation modules, disabled in the current manifest.
+Player numbers match LocalPlayers indices and HUD labels: Player 1 is on the right
+and Player 2 on the left in the observed setup. All displays start off. The table,
+compass and TP share a selection per player; manual selection survives movement
+and refresh, while next-target cycles through a stable order.
 
-POCCheckList, POCCompass and POCTP use valid loaded actor candidates. They do not reject
-them by render visibility or per-actor world identity: those extra filters removed
-real targets in this game. POCCheckList subtracts collected narrative tags using the
-active save; it lists mini-games as loaded, without claiming completion status.
-These modules do not yet provide a complete catalogue across unloaded areas.
-POCCompass now also shows the signed height difference to the Gear for each player,
-with `UP`/`DOWN` outside a +/-2 m `LEVEL` band. Its distance remains three-dimensional.
-The user confirmed this height-line addition working in game on September 18, 2026.
+Targets include loaded missing Gears, narrative items and mini-games without a saved result. Narrative status uses
+the active save; unavailable status remains Unknown. Loaded mini-games now show saved-result status: Recorded, No result or Unknown.
+Only games with a known identifier and no saved result are targetable; this does
+not infer victories or full completion. There is no catalogue of unloaded areas.
+TP uses an initial approach offset without a ground/collision test; see the Tweaks
+README for its placement policy and the in-game validation checklist.
 
-### Teleport controls
+## SkipStartup
 
-| Shortcut | Action |
+[SkipStartup](mods/SkipStartup/README.md) automatically skips the Unreal/FMOD logo,
+Firevolt logo and photosensitivity disclaimer at launch. It is enabled in
+`mods/mods.txt`, requires no shortcut, and respects each screen's 0.5-second skip
+cooldown. The normal transition to the menu and story/lobby cinematics are preserved.
+
+The user confirmed all three skips and watcher shutdown in game on September 18,
+2026. The subsequent reload fix remembers shutdown for the current game process:
+`Ctrl+R` then starts no timer and performs no startup scan. Restart the game once
+when upgrading from the initial version. This reload fix passes automated tests;
+in-game confirmation remains pending. See the [technical notes](.docs/skip-startup.md)
+for dump findings, lifecycle details and validation steps.
+
+## Prototypes and shared libraries
+
+The former modules and diagnostics use the `POC` prefix. They remain independent
+regression/investigation tools and are disabled in the Tweaks profile.
+
+| Module | Purpose |
 | --- | --- |
-| `Ctrl+F5` | Player 1 (LocalPlayers index 1): RiftX Gear approach point |
-| `Ctrl+Shift+F5` | Player 2 (LocalPlayers index 2): RiftX Gear approach point |
-| `Ctrl+F6` | Return Player 1 |
-| `Ctrl+Shift+F6` | Return Player 2 |
+| ModKit | Cleanup and loader diagnostics for the POC profile |
+| POCCoordinates | Detailed split-screen coordinates overlay |
+| POCCheckList | Loaded mini-games, Gears and missing narrative console report |
+| POCCompass | Nearest loaded Gear direction, distance and height |
+| POCTP | Fixed RiftX route and return, using F5/F6 with the player modifiers |
+| POCWallHack | Experimental reversible Gear Custom Depth, visual result unvalidated |
+| POCCoordinatesDiagnostics / POCCheckListDiagnostics / POCWallHackDiagnostics | Optional raw Unreal probes |
 
-Player numbers match LocalPlayers indices and HUD labels. In the observed setup,
-Player 1 is on the right and Player 2 on the left. Use the same function key for
-both players: Ctrl for Player 1, Ctrl+Shift for Player 2.
-POCTP stores a return point only after a successful move. A successful return consumes
-that point. Travel and mod reload invalidate return points. The fixed route still
-requires its Gear to be loaded and does not perform a collision sweep.
+[Shared libraries](mods/shared/README.md) supply runtime access, collection scans,
+selection, navigation, coordinates, teleport sessions, overlays and render-state
+restoration. They are not manifest entries. POCs keep their existing global display
+toggles; Tweaks adds independent player controls.
 
 ## Loading and reloading
 
-[`mods/mods.txt`](mods/mods.txt) is the canonical load manifest; preserve its order.
-Keep ModKit enabled: it cleans up this workshop's previous overlays and restores
-saved POCWallHack render settings on reload, including when those modules are disabled.
-The helpers under `mods/shared/` are libraries, not manifest entries.
+`Ctrl+R` reloads UE4SS mods. Use a full reload after shared helper or manifest
+changes. Tweaks owns cleanup, including removing old POC overlays and restoring
+pending POCWallHack render changes; ModKit is not needed alongside Tweaks.
 
-`Ctrl+R` in UE4SS reloads the mods. POCCoordinates, POCCompass and POCWallHack restart **off**;
-use their shortcuts to enable them again. POCCoordinates and POCCompass share a vertical
-container inside the HUD's single-child `OverlayContent` slot, so both can be shown.
-Active overlays recover when a new HUD becomes available after travel.
+To return to the POC profile, disable Tweaks and enable ModKit plus the required
+POCs in `mods/mods.txt`, then reload. Never enable both profiles together: their
+shortcuts overlap. Enable only one diagnostics module at a time.
 
-The runtime can also auto-reload edited scripts. Shared helper changes should be
-followed by a full `Ctrl+R` so every module loads the same helper version.
-
-For the first test after upgrading the old POCWallHack prototype, restart the game:
-that older code did not retain its original render values across reloads.
-Legacy coordinate/compass text is cleaned up by the new loader when identifiable.
+Reload clears all display preferences, selections and return points. Map changes
+clear selections/returns and rebuild active displays on the new HUD. A successful
+return consumes its point; failed movement preserves the previous return.
 
 ## Local development
 
@@ -112,6 +126,9 @@ compatibility. See [.docs/README.md](.docs/README.md) for installation context.
 
 Keep these checks for future changes. The functional feedback above does not imply
 that every scenario below has been individually tested.
+
+For Tweaks, use its [dedicated validation checklist](mods/Tweaks/README.md#validation-en-jeu).
+The following checks apply to the optional POC profile.
 
 1. Start a fresh local session. Show POCCoordinates and POCCompass together; hide each
    independently, then repeat in the opposite order on both screens.

@@ -14,6 +14,10 @@ collection or multiplayer authority. Use the in-game checklist in the root READM
 The shared-API tests also exercise mixed-type nearest targets, invalidated actors,
 independent teleport sessions, failed returns and explicit reset.
 
+Tweaks tests additionally cover shared scan cadence, independent player inputs/HUDs,
+automatic and manual targets, wraparound, refresh/collection, sort orders, approach
+positions, hidden-HUD teleporting, travel invalidation and profile cleanup.
+
 ## Local setup (Windows)
 
 ```powershell
@@ -30,3 +34,15 @@ To run only the behavior tests:
 ```powershell
 ./tools/test-python-env/Scripts/python.exe tests/run.py
 ```
+
+The latest lifecycle/performance regressions simulate two consecutive map changes
+with poisoned old wrappers, verify no full Actor scans during automatic updates,
+no collectible scans for coordinates-only/hidden HUDs, and no target position reads
+between refreshes. Mini-game tests distinguish saved results, missing results and
+unknown/missing identifiers. These are operation-count and lifecycle tests, not
+native frame-time measurements or proof that an access violation cannot recur.
+
+The surviving-HUD regression retains the same native widget tree across travel,
+injects a stale owned block, and verifies reuse/removal without reconstructing a
+live named widget. It also checks that pre-LoadMap suspends native world reads and
+that transient catalogue text stays hidden during post-travel/teleport refresh.

@@ -15,7 +15,7 @@ WheelMates is not a Unity game, so BepInEx is not appropriate. The game install 
 
 Current module status, local validator setup and the reusable in-game regression checklist are in the [root README](../README.md). The table above records the original setup, not a pin of the currently installed runtime.
 
-Discovery references: [collectible catalog](collectible-catalog.md), [checklist research](checklist.md), [class registry](class-registry.md), and [startup skip analysis](skip-startup.md).
+Discovery references: [collectible catalog](collectible-catalog.md), [checklist research](checklist.md), [class registry](class-registry.md), [startup skip analysis](skip-startup.md), and [ducks and pool](ducks-and-pool.md).
 
 ## Getting started
 
@@ -30,9 +30,16 @@ The first-install script references the local `g35d1795d` UE4SS bundle under `to
 
 ## Mod loading
 
-`mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; entries require a `Scripts/main.lua`; the current manifest also enables POCWallHack for WIP testing, which is not a declaration of feature completion. The repository does not use per-module `enabled.txt` files.
+`mods/mods.txt` is the canonical load manifest. Tweaks, SkipStartup and AutoDucks are enabled;
+Tweaks owns overlay cleanup and pending POCWallHack render restoration.
+WallHack functionality remains outside Tweaks. The POC modules and diagnostics are
+retained but disabled. See [Tweaks](../mods/Tweaks/README.md) for controls and checks.
 
-Press `Ctrl+R` in the UE4SS console to reload the manifest and scripts. Keep ModKit enabled for cleanup. POCCoordinates, POCCompass and POCWallHack restart off, and POCTP return points are cleared. Shared libraries live in `mods/shared/`; they are not manifest entries.
+Press `Ctrl+R` to reload the manifest and scripts, especially after shared changes.
+To test POCs independently, disable Tweaks, enable ModKit and the required POCs,
+then reload. Do not mix profiles because their shortcuts overlap. Libraries under
+`mods/shared/` are not manifest entries. Reload clears Tweaks overlays/selections
+and TP return points; active HUDs recover after map travel.
 
 SkipStartup handles launch screens independently of the POC/Tweaks profile. Once
 its watcher stops, its session state survives `Ctrl+R` and prevents a new timer or
