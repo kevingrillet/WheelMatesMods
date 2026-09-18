@@ -1,4 +1,5 @@
 ; Canonical, source-controlled UE4SS load manifest (top-to-bottom load order).
+SkipStartup : 1
 ModKit : 1
 POCCoordinates : 1
 POCCheckList : 1

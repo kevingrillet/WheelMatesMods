@@ -13,6 +13,7 @@ claim every lifecycle, collision or multiplayer scenario has been exercised.
 | POCTP | Fixed RiftX approach route and return for both local screens | Destination UI/catalogue; collision, respawn and network-authority validation |
 | POCWallHack | WIP Custom Depth/stencil toggle with reload restoration and streamed-Gear refresh | Validate actual through-wall rendering and expand categories |
 | [Tweaks](../mods/Tweaks/README.md) | Design documented; shared foundations extracted into POCs | In-game POC validation, then compact overlays, missing-item table, targeting and TP/return; WallHack later |
+| [SkipStartup](skip-startup.md) | Automatic launch-screen skip and Ctrl+R fix confirmed in game; automated regression checks pass | Retain lifecycle regression checks, including mid-intro reload and timeout/error paths |
 
 POCCompass height uses the target's Z minus the player's Z in metres. The LEVEL band
 is +/-2 m; horizontal direction and 3D distance retain their previous meaning.

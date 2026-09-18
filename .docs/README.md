@@ -15,7 +15,7 @@ WheelMates is not a Unity game, so BepInEx is not appropriate. The game install 
 
 Current module status, local validator setup and the reusable in-game regression checklist are in the [root README](../README.md). The table above records the original setup, not a pin of the currently installed runtime.
 
-Discovery references: [collectible catalog](collectible-catalog.md), [checklist research](checklist.md), and [class registry](class-registry.md).
+Discovery references: [collectible catalog](collectible-catalog.md), [checklist research](checklist.md), [class registry](class-registry.md), and [startup skip analysis](skip-startup.md).
 
 ## Getting started
 
@@ -33,6 +33,11 @@ The first-install script references the local `g35d1795d` UE4SS bundle under `to
 `mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; entries require a `Scripts/main.lua`; the current manifest also enables POCWallHack for WIP testing, which is not a declaration of feature completion. The repository does not use per-module `enabled.txt` files.
 
 Press `Ctrl+R` in the UE4SS console to reload the manifest and scripts. Keep ModKit enabled for cleanup. POCCoordinates, POCCompass and POCWallHack restart off, and POCTP return points are cleared. Shared libraries live in `mods/shared/`; they are not manifest entries.
+
+SkipStartup handles launch screens independently of the POC/Tweaks profile. Once
+its watcher stops, its session state survives `Ctrl+R` and prevents a new timer or
+scan. A full game restart enables it again. See [SkipStartup](skip-startup.md) for
+the launch behavior and Ctrl+R fix confirmed in game on September 18, 2026.
 
 ## Safety notes
 
