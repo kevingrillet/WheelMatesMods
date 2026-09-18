@@ -12,3 +12,6 @@ build/
 artifacts/
 .vs/
 *.user
+
+# Python
+.mypy_cache/
