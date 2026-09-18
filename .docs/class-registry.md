@@ -31,3 +31,16 @@ Record only classes, objects, and paths verified by dumps/logs. Do not write fea
 - Per-actor world-identity and Gear visibility filters rejected real loaded targets
   in this game. POCCheckList/POCCompass/POCTP use valid loaded candidates instead. POCTP still
   tracks the session world separately to invalidate return points after travel.
+
+## Rubber ducks and pool - September 18 dump
+
+These are dump-confirmed classes; AutoDucks runtime validation is pending.
+See [ducks and pool](ducks-and-pool.md) for paths, coordinates and evidence.
+
+| Class | Observed role |
+| --- | --- |
+| `BP_PhysicsActor_RubberDuck_01_prp_C` | Variant 01; seven loaded instances |
+| `BP_PhysicsActor_RubberDuck_02_prp_C` | Variant 02; eight loaded instances |
+| `BP_PhysicsResponsiveActor_Base_MagnetGrab_C` | Duck parent; mesh, targeting and return behaviour |
+| `BP_Pool_01_01_prp_C` | Pool mesh assembly |
+| `BP_Trigger_PhysicObject_RequiredCount_C` | Candidate pool counter; achievement connection unverified |
