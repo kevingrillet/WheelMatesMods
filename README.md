@@ -2,6 +2,14 @@
 
 Personal WheelMates mod workshop using UE4SS and Unreal Engine 5.7.
 
+> [!NOTE]
+> **Educational purpose — exploring modding**
+> This project is a personal learning space for discovering game modding,
+> experimenting with Lua and UE4SS, and understanding Unreal Engine systems.
+> The code and prototypes are shared for educational purposes and experimentation.
+> This is an unofficial community project, unaffiliated with the developers or
+> publishers of WheelMates.
+
 The pre-refactor modules are recorded in Conventional Commits. On September 18,
 2026, the user confirmed POCCompass/POCTP and then POCCheckList working again after the
 loaded-actor filter fixes, and reported that the refactor looks good. This is
