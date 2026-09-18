@@ -1,5 +1,9 @@
 # ModKit
 
-Passive diagnostic mod. It verifies loading from this repository and writes a UE4SS log message. It does not touch actors, saves, or rendering.
+Loader diagnostic and reload recovery module. Keep it enabled in `mods/mods.txt`.
+It removes Coordinates/Compass widgets left by previous Lua states and restores
+WallHack's saved render settings, even if those modules were disabled in the new
+manifest. It never writes game saves.
 
-[`../mods.txt`](../mods.txt) is the canonical load manifest. ModKit is loaded from that file along with the other active modules; it does not require an `enabled.txt` marker.
+Shared render state contains scalar paths, addresses and original values rather
+than transient UObject references. Invalid or replaced components are skipped.
