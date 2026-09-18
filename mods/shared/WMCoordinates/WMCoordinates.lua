@@ -20,4 +20,9 @@ function M.text(player_index, pawn)
     )
 end
 
+function M.compact(player_index, pawn)
+    local position = pawn:K2_GetActorLocation()
+    return string.format("P%d XYZ %.0f / %.0f / %.0f cm", player_index, position.X, position.Y, position.Z)
+end
+
 return M

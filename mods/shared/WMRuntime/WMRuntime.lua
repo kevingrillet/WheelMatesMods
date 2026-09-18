@@ -42,7 +42,9 @@ function M.identity(object)
 end
 
 function M.world_id()
-    return M.identity(UEHelpers.GetWorld())
+    -- GetWorld in UEHelpers scans all PlayerControllers on each call.
+    local instance = UEHelpers.GetGameInstance()
+    return M.valid(instance) and M.identity(instance:GetWorld()) or nil
 end
 
 function M.in_world(object, world_id)
@@ -83,6 +85,24 @@ function M.gears()
         end
     end)
     return result
+end
+
+function M.reference(object)
+    if not M.valid(object) then
+        return nil
+    end
+    return { path = object:GetFullName(), address = object:GetAddress() }
+end
+
+function M.resolve(reference)
+    if not reference then
+        return nil
+    end
+    local object = StaticFindObject(reference.path)
+    if M.valid(object) and object:GetAddress() == reference.address then
+        return object
+    end
+    return nil
 end
 
 return M

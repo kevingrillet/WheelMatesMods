@@ -127,7 +127,7 @@ function StaticConstructObject(class, outer, name)
     local text = name and name:ToString() or "Anonymous"
     for _, value in ipairs(objects) do
         if value.valid and value.class == class.name and value.outer == outer and value.name == text then
-            return value
+            error("Attempted to reconstruct a live named widget: " .. text)
         end
     end
     return object(class.name, text, outer)
@@ -162,6 +162,9 @@ end
 function LoopInGameThreadWithDelay(delay, callback)
     loops[#loops + 1] = { delay = delay, callback = callback }
 end
+function RegisterLoadMapPreHook(callback)
+    pre_load_map = callback
+end
 function RegisterLoadMapPostHook(callback)
     load_map = callback
 end
@@ -193,6 +196,9 @@ function world:GetWorld()
 end
 instance = object("GameInstance", "Session")
 instance.world = world
+function instance:GetWorld()
+    return world
+end
 players, pawns, controllers, layouts = {}, {}, {}, {}
 for index = 1, 2 do
     local player = object("LocalPlayer", "P" .. index, instance)
@@ -204,7 +210,7 @@ for index = 1, 2 do
 end
 instance.LocalPlayers = array(players)
 function make_layout(index)
-    local layout = object("WBP_PlayerHUDLayout_Split_C", "HUD" .. index)
+    local layout = object("WBP_PlayerHUDLayout_Split_C", "HUD" .. index .. "_" .. address)
     layout.world, layout.controller = world, controllers[index]
     layout.WidgetTree = object("WidgetTree", "Tree", layout)
     layout.OverlayContent = object("NamedSlot", "OverlayContent", layout.WidgetTree)
@@ -246,6 +252,7 @@ function reload()
         "WMCollectibles",
         "WMNavigation",
         "WMCoordinates",
+        "WMTargets",
         "WMTeleport",
     }) do
         package.loaded[module] = nil

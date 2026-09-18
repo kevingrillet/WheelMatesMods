@@ -23,8 +23,7 @@ local function gameplay_tag_text(value)
 end
 
 --- Builds a set of narrative item tags already saved for the current player.
-local function collected_narrative_tags()
-    local collected = {}
+local function active_save_game()
     local instance = UEHelpers.GetGameInstance()
     local active_save
     Runtime.each(FindAllOf("VehicleSaveGameSubsystem"), function(subsystem)
@@ -39,9 +38,14 @@ local function collected_narrative_tags()
             active_save = save
         end
     end)
+    return active_save
+end
+
+local function collected_narrative_tags(active_save)
     if not active_save then
         return nil
     end
+    local collected = {}
     local ok = pcall(function()
         active_save.CollectedNarrativeItems:ForEach(function(key)
             collected[gameplay_tag_text(key)] = true
@@ -55,7 +59,16 @@ end
 
 -- A fresh loaded-object snapshot. Consumers own refresh cadence and presentation.
 -- Unknown completion must never become Missing; mini-games remain Loaded only.
-function M.scan()
+function M.scan(options)
+    options = options or {}
+    local save = active_save_game()
+    local played = {}
+    local games_known = save ~= nil
+        and pcall(function()
+            save.LastMinigameResultById:ForEach(function(key)
+                played[gameplay_tag_text(key)] = true
+            end)
+        end)
     local result = { gears = {}, narrative = {}, minigames = {}, narrative_loaded = 0 }
     Runtime.each(FindAllOf("MinigameCollectableComponent"), function(component)
         if not Runtime.valid(component) then
@@ -70,22 +83,37 @@ function M.scan()
         end)
         local label = ok and gameplay_tag_text(tag) or "<unknown>"
         label = label:gsub("Minigame%.", ""):gsub("%.Entry%.Guest", "")
-        result.minigames[#result.minigames + 1] =
-            { actor = owner, type = "Mini-game", status = "Loaded", label = label }
+        local id_ok, id = pcall(function()
+            return gameplay_tag_text(component.MinigameId)
+        end)
+        local known = games_known and id_ok and id:sub(1, 9) == "Minigame."
+        result.minigames[#result.minigames + 1] = {
+            actor = owner,
+            type = "Mini-game",
+            status = "Loaded",
+            label = label,
+            progress = known and (played[id] and "Recorded" or "No result") or "Unknown",
+        }
     end)
     for index, actor in ipairs(Runtime.gears()) do
         result.gears[#result.gears + 1] =
             { actor = actor, type = "Gear", status = "Missing", label = string.format("Loaded Gear %d", index) }
     end
-    local collected = collected_narrative_tags()
+    local collected = collected_narrative_tags(save)
     result.narrative_known = collected ~= nil
     if not result.narrative_known then
         return result
     end
-    Runtime.each(FindAllOf("Actor"), function(actor)
+    local seen = {}
+    local function inspect(actor)
         if not Runtime.valid(actor) then
             return
         end
+        local id = Runtime.identity(actor)
+        if seen[id] then
+            return
+        end
+        seen[id] = true
         local ok, tag = pcall(function()
             return actor.NarrativeTagId
         end)
@@ -101,7 +129,10 @@ function M.scan()
             result.narrative[#result.narrative + 1] =
                 { actor = actor, type = "Narrative", status = "Missing", label = text }
         end
-    end)
+    end
+    for _, class in ipairs(options.narrative_classes or { "Actor" }) do
+        Runtime.each(FindAllOf(class), inspect)
+    end
     return result
 end
 

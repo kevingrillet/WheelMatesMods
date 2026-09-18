@@ -68,6 +68,7 @@ function M.new(log)
                     target.Z
                 )
             )
+            return true
         else
             log(string.format("Teleport failed for Player %d: %s", player_number, tostring(result_or_error)))
         end
@@ -86,7 +87,7 @@ function M.new(log)
             log("Return cancelled: the original world is no longer active.")
             return
         end
-        self:move(player_number, last_location.position, "saved return location", true)
+        return self:move(player_number, last_location.position, "saved return location", true)
     end
 
     return self
