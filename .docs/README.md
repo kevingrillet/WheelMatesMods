@@ -8,10 +8,12 @@
 | Steam build | `25208735` |
 | Game directory | `C:\Program Files (x86)\Steam\steamapps\common\WheelMates` |
 | Game executable | `CarGame\Binaries\Win64\LyraGameSteam-Win64-Shipping.exe` |
-| Engine | Unreal Engine 5, likely 5.7 |
+| Engine | Unreal Engine 5.7 (confirmed by September 18 jmap) |
 | Mod loader | UE4SS developer build, supplied under `tools/` |
 
-WheelMates is not a Unity game, so BepInEx is not appropriate. The game install has no usable official SDK or ModKit (`LogicMods` is empty). This repository uses UE4SS, starting with read-only Lua observation.
+WheelMates is not a Unity game, so BepInEx is not appropriate. The game install has no usable official SDK or ModKit (`LogicMods` is empty). This repository uses UE4SS Lua modules for HUD overlays, loaded collectible reports, local teleportation and experimental render changes.
+
+Current module status, local validator setup and the reusable in-game regression checklist are in the [root README](../README.md). The table above records the original setup, not a pin of the currently installed runtime.
 
 Discovery references: [collectible catalog](collectible-catalog.md), [checklist research](checklist.md), and [class registry](class-registry.md).
 
@@ -20,16 +22,17 @@ Discovery references: [collectible catalog](collectible-catalog.md), [checklist 
 ```powershell
 .\scripts\setup-tools.ps1                  # diagnostics only; does not write to the game
 .\scripts\setup-tools.ps1 -InstallUE4SS    # only after backing up saves
-.\scripts\test.ps1                         # manifest and optional Lua validation
+# Install StyLua and the isolated Lua test runtime using the root README first.
+.\scripts\test.ps1                         # manifest, required StyLua and Lua regression tests
 ```
 
-The script uses the pinned UE4SS bundle under `tools/`. Lua mods do not need CMake, Ninja, xmake, or MSVC. FModel, RePak, and retoc are optional reverse-engineering tools and are not installed automatically.
+The first-install script references the local `g35d1795d` UE4SS bundle under `tools/`; the September 18 runtime dump reports `f6d5f942`. It refuses to replace an existing proxy DLL and is not an updater. Keep the working runtime when following the development setup. Lua mods do not need CMake, Ninja, xmake, or MSVC. FModel, RePak, and retoc are optional reverse-engineering tools and are not installed automatically.
 
 ## Mod loading
 
-`mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; add a module only after its `Scripts/main.lua` has been implemented and tested. The repository does not use per-module `enabled.txt` files.
+`mods/mods.txt` is the canonical, source-controlled UE4SS load manifest. Its order is the module load order; entries require a `Scripts/main.lua`; the current manifest also enables WallHack for WIP testing, which is not a declaration of feature completion. The repository does not use per-module `enabled.txt` files.
 
-Press `Ctrl + R` in the UE4SS console to reload the manifest and source files while the game is running.
+Press `Ctrl+R` in the UE4SS console to reload the manifest and scripts. Keep ModKit enabled for cleanup. Coordinates, Compass and WallHack restart off, and TP return points are cleared. Shared libraries live in `mods/shared/`; they are not manifest entries.
 
 ## Safety notes
 

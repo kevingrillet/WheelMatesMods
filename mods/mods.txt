@@ -2,8 +2,8 @@
 ModKit : 1
 Coordinates : 1
 CheckList : 1
-TP : 1
 Compass : 1
+TP : 1
 WallHack : 1
 CoordinatesDiagnostics : 0
 CheckListDiagnostics : 0

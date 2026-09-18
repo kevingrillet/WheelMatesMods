@@ -1,12 +1,24 @@
 # CheckList discovery notes
 
-## Objective
+## Current implementation (September 18, 2026)
+
+`Ctrl+F2` prints loaded mini-game entry points, valid loaded Gears and missing
+narrative items, including Memory Cards. It reads
+`VehicleSaveGameSubsystem.CurrentSaveGame` owned by the current GameInstance.
+Unavailable save data yields `Unknown`; other loaded saves are not merged.
+
+The per-actor world-identity filter was removed after it excluded live Memory Cards
+and mini-games. Gears also avoid visibility-based filtering. The user confirmed the
+report restored after these corrections. Mini-games are listed as `Loaded`, not
+completed/missing; the report is not yet an exhaustive cross-level catalogue.
+
+## Future objective
 
 Show each collectible the active player has not obtained, grouped by category, in an in-game window.
 
 Candidate categories to validate in the game are Neuro Nodes, Neuro Cores, Neuro Memory Cards, scannable objects, and mini-game collectibles. These labels are provisional until runtime classes and save-state fields are confirmed.
 
-## Confirmed runtime data (build 25208735)
+## Historical discovery snapshot (build 25208735)
 
 `VehicleSaveGame.CollectablesStats` uses gameplay tags as keys:
 
@@ -18,9 +30,9 @@ Candidate categories to validate in the game are Neuro Nodes, Neuro Cores, Neuro
 
 The player snapshot used during discovery is therefore missing three Plates and two Gears. `CollectedItems` is a `TSet` of 1,624 persistent GUIDs and is the authoritative collected-item set.
 
-Gears are known to unlock vehicle-customization options. The next correlation probe therefore reads `VehicleSaveGame.UnlockedCustomizationOptions` alongside loaded `BP_Collectable_Gear` actors; it remains read-only and is intended to establish the identifier linking a Gear, its persistent GUID, and its unlock.
+Gears are known to unlock vehicle-customization options. The Gear correlation probe in CheckListDiagnostics reads `VehicleSaveGame.UnlockedCustomizationOptions` alongside loaded `BP_Collectable_Gear` actors; it remains read-only and is intended to establish the identifier linking a Gear, its persistent GUID, and its unlock.
 
-`PerLevelData` currently contains the tags `Map.Level.Tutorial`, `Map.Level.Kitchen`, `Map.Level.Backyard`, `Map.Level.Corridor`, `Map.Level.RiftX`, `Map.Level.Garage`, and `Map.Level.Shed`.
+The discovery snapshot of `PerLevelData` contains the tags `Map.Level.Tutorial`, `Map.Level.Kitchen`, `Map.Level.Backyard`, `Map.Level.Corridor`, `Map.Level.RiftX`, `Map.Level.Garage`, and `Map.Level.Shed`.
 
 The saved mini-game result map contains completed results for Kitchen Game of Tag, Hallway Coin Rush, RiftX Coin Rush, and Garage Game of Tag. It does **not** establish the total number of mini-games in the game. Mini-game completion must remain part of the final checklist, but the saved results are not one of the five missing Plate/Gear items in this snapshot.
 
@@ -30,13 +42,13 @@ In the RiftX-loaded session, the compact runtime probe found 27 narrative items,
 
 ## Required evidence before UI work
 
-The game package contains names such as `Collectable`, `MemoryCard`, and `Antenna`, but asset names alone do not establish how the runtime tracks collection. CheckList's first implementation is therefore a read-only probe:
+The game package contains names such as `Collectable`, `MemoryCard`, and `Antenna`, but asset names alone do not establish how the runtime tracks collection. The read-only discovery probes now live in `CheckListDiagnostics` (`Ctrl+NumPad 1`):
 
 - candidate actors loaded in the current level, found by a one-off scan of actor class and object names;
 - their concrete runtime class names;
 - loaded `SaveGame` instances and the reflected properties of WheelMates (`CarGame`) save classes.
 
-Run `Ctrl + F2` in a level and record the console block beginning with `[CheckList]`. Repeat once just before and after collecting a known item if practical.
+Use `Ctrl+F2` for the compact player-facing report, and the diagnostic module for class/property discovery. Comparing reports before and after collecting a known item remains useful.
 
 ## Design constraints
 
@@ -44,7 +56,8 @@ Run `Ctrl + F2` in a level and record the console block beginning with `[CheckLi
 - The final checklist must use the player's persistent save state, not infer progress from an item simply being absent.
 - Split-screen support must use the selected local player. Remote-player support must be explicitly tested on the host.
 - The discovery module is diagnostic only: it never writes save data or changes game objects.
-# Module split
+
+## Module split
 
 `CheckList` contains only the player-facing compact checklist on `Ctrl+F2`.
 It includes loaded Gears as missing items because collected Gears are removed from the active level.

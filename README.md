@@ -1,24 +1,122 @@
 # WheelMatesMods
 
-Personal WheelMates mod workshop based on UE4SS (Unreal Engine 5).
+Personal WheelMates mod workshop using UE4SS and Unreal Engine 5.7.
 
-Read [.docs/README.md](.docs/README.md), then run:
-
-```powershell
-    .\scripts\setup-tools.ps1
-```
-
-## Mod loading
-
-[`mods/mods.txt`](mods/mods.txt) is the source-controlled, canonical load manifest. Add a module there only after it has a working `Scripts/main.lua`; the order in this file is the UE4SS load order.
-
-After changing source files while the game is running, press `Ctrl + R` in the UE4SS console to reload the active modules. Per-module `enabled.txt` files are not used by this repository.
+The pre-refactor modules are recorded in Conventional Commits. On September 18,
+2026, the user confirmed Compass/TP and then CheckList working again after the
+loaded-actor filter fixes, and reported that the refactor looks good. This is
+functional feedback, not an exhaustive validation of every lifecycle edge case.
+The user also confirmed the new Compass height indicator working and approved
+committing this first refactor.
 
 ## Modules
 
-- **ModKit**: passive loader and diagnostic probe.
-- **Coordinates**: live, per-local-player in-game coordinate overlay.
-- **CheckList**: compact, read-only list of loaded mini-games and missing narrative collectibles.
-- **TP**: local-player teleport validation and return point.
-- **CoordinatesDiagnostics** and **CheckListDiagnostics**: disabled-by-default, read-only reverse-engineering probes. Enable only one when needed; their NumPad shortcuts intentionally overlap.
-- **Compass**, **WallHack**, and **Tweaks**: planned modules, enabled only when implemented and tested.
+| Module | Status | Controls |
+| --- | --- | --- |
+| ModKit | Loader diagnostics and reload cleanup | Automatic |
+| Coordinates | Functional split-screen overlay; shared container and reload cleanup | `Ctrl+F1` |
+| CheckList | Functional loaded-item console report; active-save filtering | `Ctrl+F2` |
+| Compass | Functional Gear direction HUD with UP/DOWN/LEVEL height indication | `Ctrl+F3` |
+| TP | Functional fixed RiftX route and return for both screens | See below |
+| WallHack | **WIP**: reversible Gear Custom Depth; through-wall visual result unvalidated | `Ctrl+F4` |
+| Tweaks | Not started | None |
+
+`CoordinatesDiagnostics`, `CheckListDiagnostics` and `WallHackDiagnostics` are
+optional investigation modules, disabled in the current manifest.
+
+CheckList, Compass and TP use valid loaded actor candidates. They do not reject
+them by render visibility or per-actor world identity: those extra filters removed
+real targets in this game. CheckList subtracts collected narrative tags using the
+active save; it lists mini-games as loaded, without claiming completion status.
+These modules do not yet provide a complete catalogue across unloaded areas.
+Compass now also shows the signed height difference to the Gear for each player,
+with `UP`/`DOWN` outside a +/-2 m `LEVEL` band. Its distance remains three-dimensional.
+The user confirmed this height-line addition working in game on September 18, 2026.
+
+### Teleport controls
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl+F5` | Left screen (LocalPlayers index 2): RiftX Gear approach point |
+| `Ctrl+F6` | Right screen (LocalPlayers index 1): RiftX Gear approach point |
+| `Ctrl+F7` | Return left screen |
+| `Ctrl+F9` | Return right screen |
+
+Screen/index correspondence is the observed local split-screen configuration.
+TP stores a return point only after a successful move. A successful return consumes
+that point. Travel and mod reload invalidate return points. The fixed route still
+requires its Gear to be loaded and does not perform a collision sweep.
+
+## Loading and reloading
+
+[`mods/mods.txt`](mods/mods.txt) is the canonical load manifest; preserve its order.
+Keep ModKit enabled: it cleans up this workshop's previous overlays and restores
+saved WallHack render settings on reload, including when those modules are disabled.
+The helpers under `mods/shared/` are libraries, not manifest entries.
+
+`Ctrl+R` in UE4SS reloads the mods. Coordinates, Compass and WallHack restart **off**;
+use their shortcuts to enable them again. Coordinates and Compass share a vertical
+container inside the HUD's single-child `OverlayContent` slot, so both can be shown.
+Active overlays recover when a new HUD becomes available after travel.
+
+The runtime can also auto-reload edited scripts. Shared helper changes should be
+followed by a full `Ctrl+R` so every module loads the same helper version.
+
+For the first test after upgrading the old WallHack prototype, restart the game:
+that older code did not retain its original render values across reloads.
+Legacy coordinate/compass text is cleaned up by the new loader when identifiable.
+
+## Local development
+
+```powershell
+./scripts/setup-tools.ps1
+./scripts/install-stylua.ps1
+python -m venv tools/test-python-env
+./tools/test-python-env/Scripts/python.exe -m pip install -r tests/requirements.txt
+./scripts/test.ps1
+```
+
+StyLua **2.5.2** installs to `tools/stylua/stylua.exe`, with its archive SHA-256
+verified. No administrator access or global PATH change is required. The source is
+the [official StyLua release](https://github.com/JohnnyMorganz/StyLua/releases/tag/v2.5.2).
+
+```powershell
+./tools/stylua/stylua.exe --check mods tests  # Validate syntax and formatting
+./tools/stylua/stylua.exe mods tests         # Apply formatting
+```
+
+`stylua.toml` defines the shared formatting rules. VS Code already recommends the
+StyLua extension; the command-line installation is what `scripts/test.ps1` uses.
+The test script runs manifest checks, StyLua and the [Lua regression tests](tests/README.md).
+It fails when required validation tools are missing.
+
+`setup-tools.ps1 -InstallUE4SS` is a first-install script, not an updater. Its local
+bundle path still names `g35d1795d`; the supplied September 18 jmap was generated by
+`f6d5f942`. Do not use the older bundle to replace the working runtime without checking
+compatibility. See [.docs/README.md](.docs/README.md) for installation context.
+
+## In-game regression checklist
+
+Keep these checks for future changes. The functional feedback above does not imply
+that every scenario below has been individually tested.
+
+1. Start a fresh local session. Show Coordinates and Compass together; hide each
+   independently, then repeat in the opposite order on both screens.
+2. Reload with `Ctrl+R` while both are visible. They should disappear, then toggle
+   normally without duplicate or stuck text. Repeat after changing level.
+3. Test TP and return for both screens. After a level change, old return points must
+   be unavailable. Verify the RiftX approach position and vehicle behavior.
+4. Run CheckList with a loaded save and during loading. Missing narrative entries
+   should use only the active save; unavailable state should say `Unknown`.
+5. Enable WallHack, move to load another Gear, disable it, then repeat across `Ctrl+R`.
+   Use `WallHackDiagnostics` to compare original/restored depth and stencil values.
+   This does not yet guarantee a visible through-wall effect.
+
+## Repository policy
+
+`UE4SS_Dumps/`, `UE4SS_SDK/`, `save/` and `tools/` remain local and ignored by Git.
+A jmap provides reflected classes and defaults, not live actor property snapshots.
+Use runtime diagnostics when inspecting current meshes, materials and render state.
+
+Use Conventional Commits, with separate module-focused changes where practical.
+The first refactor was approved for commit after the user's in-game checks.

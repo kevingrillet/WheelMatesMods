@@ -20,15 +20,15 @@ The following names occur alongside level and narrative data. They must be treat
 - `CustomParts`
 - `DataBank.Item.Spot`
 
-`BP_NarrativeItem_Scannable_C` is confirmed as a runtime actor class for scannable objects. The current Backyard session contains eight instances.
+`BP_NarrativeItem_Scannable_C` is confirmed as a runtime actor class for scannable objects. The original Backyard discovery session contained eight instances; this is not a current-session count.
 
 ## Mini-games
 
-The save has completed results for four mini-games, but that is not an exhaustive catalog. A completed-result entry proves completion only; it does not prove that no other mini-game definition exists.
+The historical discovery save had completed results for four mini-games, but that is not an exhaustive catalog. A completed-result entry proves completion only; it does not prove that no other mini-game definition exists.
 
 ## Implication for CheckList
 
-CheckList must have independent sections for:
+The future complete catalogue should cover these families separately (the current console report covers loaded Gears, missing narrative actors and mini-game entry points):
 
 1. primary items (Neurocores, Plates, Gears);
 2. narrative items (Memory Cards, Scan Objects, Nodes, Data Bank entries);
