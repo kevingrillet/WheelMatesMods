@@ -1,15 +1,25 @@
 # TP
 
-The initial Teleport module validates safe local-Pawn relocation before adding an in-game destination window.
-
-## Current test destination
-
-The module targets an approach point 600 Unreal units beside the loaded missing Gear identified by CheckList in RiftX, and only enables that route while the matching Gear actor is loaded. The vehicle arrives 100 Unreal units above the recorded ground position so its existing physics can settle without spawning inside the Gear or nearby geometry.
+Fixed RiftX Gear approach route for local split-screen testing.
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl + F5` | Teleport local Player 1 to the RiftX Gear. |
-| `Ctrl + F6` | Teleport local Player 2 to the RiftX Gear. |
-| `Ctrl + F7` | Return local Player 1 to the last location saved by this module. |
+| `Ctrl+F5` | Left screen (local index 2) to Gear approach point |
+| `Ctrl+F6` | Right screen (local index 1) to Gear approach point |
+| `Ctrl+F7` | Return left screen |
+| `Ctrl+F9` | Return right screen |
 
-The module only moves local Pawns, performs all Unreal calls on the game thread, and does not change the save data. The return location is held in memory and is cleared by a mod reload or game restart.
+The route requires a valid loaded Gear near the recorded target coordinates, as in
+the working prototype. Render flags and per-Gear world identity are not filters.
+The fixed destination is 600 Unreal units beside and 100 above the recorded Gear
+location; this is not a
+collision check and should be tested offline.
+
+Only a successful `K2_SetActorLocation` result replaces a return point. Failed moves
+retain it; successful returns consume it. Return points are invalidated by world
+changes, map-load notifications, mod reloads and restarts. Unreal calls run on the
+game thread. The mod does not write save files.
+
+The user confirmed TP working again after the loaded-target filter correction on
+September 18, 2026. This does not establish multiplayer authority or collision safety
+for arbitrary future destinations.
