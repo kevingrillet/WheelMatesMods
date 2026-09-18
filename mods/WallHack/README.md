@@ -1,7 +1,21 @@
-# WallHack
+# WallHack (WIP)
 
-`Ctrl+F4` toggles Custom Depth on the two Static Mesh render components of loaded, uncollected Gears. The original Custom Depth and stencil values are restored when toggled off.
+`Ctrl+F4` toggles Custom Depth and stencil 1 on the loaded Gears' `StaticMesh` and
+`Sphere` components. These fields come from `BP_Collectable_OutlineBubble_C`.
+While enabled, a one-second refresh includes newly loaded Gears.
 
-Rendering probes are provided by the separate, disabled-by-default `WallHackDiagnostics` module.
+Original depth/stencil values are stored in UE4SS shared scalar variables before
+mutation. They survive Lua reloads. WallHack restores them when disabled, and ModKit
+restores them after a full reload even if WallHack is disabled in the manifest.
+Failed restorations are retained for retry while WallHack is loaded.
 
-`Ctrl+Shift+F4` runs the read-only component probe. No actor, material, visibility, or save state is modified.
+Restart the game once when upgrading from the old prototype: originals lost by that
+version cannot be reconstructed. The visible through-wall effect remains unvalidated;
+this module currently controls the render-buffer flags, not a complete outline shader.
+
+Optional `WallHackDiagnostics` controls:
+
+- `Ctrl+Shift+F4`: Gear component probe.
+- `Ctrl+F8`: player outline probe.
+
+Diagnostics are disabled by default and read-only.
